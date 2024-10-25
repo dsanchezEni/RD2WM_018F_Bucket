@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Wish;
 use App\Form\WishType;
 use App\Repository\WishRepository;
+use App\Service\FileUploader;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -38,7 +39,7 @@ class WishController extends AbstractController
     }
 
     #[Route('/create', name: 'create',methods: ['GET','POST'])]
-    public function create(Request $request, EntityManagerInterface $em): Response
+    public function create(Request $request, EntityManagerInterface $em,FileUploader $fileUploader): Response
     {
         //Création de l'objet Wish.
         $wish = new Wish();
@@ -50,6 +51,12 @@ class WishController extends AbstractController
         if($wishForm->isSubmitted() && $wishForm->isValid()){
             //hydrate les propriétés absentes du formulaire
             $wish->setPublished(true);
+            //Traitement de l'image
+            $imageFile=$wishForm->get('image')->getData();
+            if($imageFile){
+                $wish->setFilename($fileUploader->upload($imageFile));
+            }
+
             //Sauvegarde en BDD
             $em->persist($wish);
             $em->flush();
@@ -64,7 +71,7 @@ class WishController extends AbstractController
     }
 
     #[Route('/{id}/update', name: 'update',requirements:['id'=>'\d+'],methods: ['GET','POST'])]
-    public function update(int $id, WishRepository $wishRepository, Request $request, EntityManagerInterface $em): Response
+    public function update(int $id, WishRepository $wishRepository, Request $request, EntityManagerInterface $em,FileUploader $fileUploader): Response
     {
         //Récupération du wish à modifier en fonction de son id présent dans l'url.
         $wish = $wishRepository->find($id);
@@ -79,6 +86,22 @@ class WishController extends AbstractController
         if($wishForm->isSubmitted() && $wishForm->isValid()){
             //hydrate les propriétés absentes du formulaire
             $wish->setDateUpdated(new \DateTimeImmutable());
+
+            //Traitement de l'image
+            $imageFile=$wishForm->get('image')->getData();
+            if(($wishForm->has('deleteImage') && $wishForm['deleteImage']->getData()||$imageFile)){
+                //Suppression de l'ancienne image si on a coché l'option dans le formulaire
+                //ou si on a changé l'image
+                $fileUploader->delete($wish->getFilename(),$this->getParameter('app.images_wish_directory'));
+
+                if($imageFile){
+                    $wish->setFilename($fileUploader->upload($imageFile));
+                }else{
+                    $wish->setFilename(null);
+                }
+            }
+
+
             //Sauvegarde en BDD
             $em->flush();
             //Afficher un message sur la prochaine page

@@ -14,6 +14,19 @@ Add Your wishes | {{ parent() }}
     {{ form_row(wishForm.title) }}
     {{ form_row(wishForm.description) }}
     {{ form_row(wishForm.author) }}
+    <div class="d-flex">
+        <div class="col-sm-9">
+            {{ form_row(wishForm.image) }}
+        </div>
+        <div class="col-sm-3">
+            {% if wishForm.vars.value.filename !=null %}
+                <img src="{{ asset(app_images_wish_directory ~ '/' ~ wish.filename) }}"
+                     alt="image"
+                class="card-img-top img-fluid">
+            {% endif %}
+        </div>
+
+    </div>
     {{ form_row(wishForm.published) }}
     <button class="btn btn-sm btn-primary">{{ wishForm.vars.value.id ==null ? 'Create' : 'Modify' }}</button>
     {{ form_end(wishForm) }}
