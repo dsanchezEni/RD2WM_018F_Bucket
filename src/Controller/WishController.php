@@ -111,7 +111,8 @@ class WishController extends AbstractController
         }
         //Affiche le formulaire
         return $this->render('wish/create.html.twig',
-            ['wishForm' => $wishForm]);
+            ['wishForm' => $wishForm,
+            'wish'=>$wish]);
     }
 
     #[Route('/{id}/delete', name: 'delete',requirements:['id'=>'\d+'],methods: ['GET'])]
