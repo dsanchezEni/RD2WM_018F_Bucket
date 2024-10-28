@@ -18,20 +18,20 @@ class Wish
     #[ORM\Column(length: 250)]
     #[Assert\NotBlank(message: 'Please provide an idea!')]
     #[Assert\Length(min: 5, max: 250,
-        minMessage: "Minimum length is {{limit}} characters!",
-        maxMessage: "Maximum length is {{limit}} characters!")]
+        minMessage: "Minimum length is {{ limit }} characters!",
+        maxMessage: "Maximum length is {{ limit }} characters!")]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     #[Assert\Length(min: 5, max: 5000,
-        minMessage: "Minimum length is {{limit}} characters!",
-        maxMessage: "Maximum length is {{limit}} characters!")]
+        minMessage: "Minimum length is {{ limit }} characters!",
+        maxMessage: "Maximum length is {{ limit }} characters!")]
     private ?string $description = null;
 
     #[ORM\Column(length: 50)]
     #[Assert\Length(min: 3, max: 50,
-        minMessage: "Minimum length is {{limit}} characters!",
-        maxMessage: "Maximum length is {{limit}} characters!")]
+        minMessage: "Minimum length is {{ limit }} characters!",
+        maxMessage: "Maximum length is {{ limit }} characters!")]
     #[Assert\NotBlank(message: 'Please provide your username!')]
     #[Assert\Regex(pattern:'/^[a-z0-9_-]+$/i',
         message: 'Please use only letters, numbers, underscores and dashes!')]
@@ -48,6 +48,11 @@ class Wish
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $filename = null;
+
+    #[ORM\ManyToOne(inversedBy: 'wishes')]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull]
+    private ?Category $category = null;
 
     public function __construct()
     {
@@ -141,6 +146,18 @@ class Wish
     public function setFilename(?string $filename): static
     {
         $this->filename = $filename;
+
+        return $this;
+    }
+
+    public function getCategory(): ?Category
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?Category $category): static
+    {
+        $this->category = $category;
 
         return $this;
     }

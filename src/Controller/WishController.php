@@ -19,7 +19,8 @@ class WishController extends AbstractController
     {
         //Récupère les wishs qui sont publiés, et trie les du plus récent au plus ancien
         //ON PENSE OBJET §§§§§§§§§
-        $wishes = $wishRepository->findBy(['published' => true], ['dateCreated' => 'DESC']);
+        //$wishes = $wishRepository->findBy(['published' => true], ['dateCreated' => 'DESC']);
+        $wishes= $wishRepository->findPublishedWishesWithCategories();
         return $this->render('wish/list.html.twig',[
             'wishes' => $wishes
         ]);

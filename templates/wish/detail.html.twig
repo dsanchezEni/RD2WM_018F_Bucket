@@ -15,6 +15,7 @@
         {% endif %}
         <div class="card-body">
             <h5 class="card-title">{{ wish.title }}</h5>
+            <p class="card-text">[{{ wish.category.name }}]</p>
             <p class="wish-credit">Created by {{ wish.author }} on {{ wish.dateCreated | date('Y-m-d')}}</p>
             {# le filtre nl2br convertit les sauts de ligne de texte en balises <br> #}
             <p class="card-text">{{ wish.description|nl2br }}</p>
