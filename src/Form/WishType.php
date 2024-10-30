@@ -28,9 +28,7 @@ class WishType extends AbstractType
                 'label' => 'Please describe it!',
                 'required' => false,
             ])
-            ->add('author',TextType::class,[
-                'label' => 'Your username',
-            ])
+
             ->add('category',EntityType::class,[
                 'label' => 'Category',
                 'class' => Category::class,

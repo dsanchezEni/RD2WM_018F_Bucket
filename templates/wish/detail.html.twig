@@ -16,17 +16,21 @@
         <div class="card-body">
             <h5 class="card-title">{{ wish.title }}</h5>
             <p class="card-text">[{{ wish.category.name }}]</p>
-            <p class="wish-credit">Created by {{ wish.author }} on {{ wish.dateCreated | date('Y-m-d')}}</p>
+            <p class="wish-credit">Created by {{ wish.user.username }} on {{ wish.dateCreated | date('Y-m-d')}}</p>
             {# le filtre nl2br convertit les sauts de ligne de texte en balises <br> #}
             <p class="card-text">{{ wish.description|nl2br }}</p>
         </div>
         <div class="text-center">
-            <a href="{{ path('app_wish_delete',{'id':wish.id,'token':csrf_token('delete'~wish.id)}) }}"
-               class="btn btn-danger mt-2 mb-2"
-               title="Delete the wish">Delete</a>
+            {% if app.user == wish.user or is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('app_wish_delete',{'id':wish.id,'token':csrf_token('delete'~wish.id)}) }}"
+                   class="btn btn-danger mt-2 mb-2"
+                   title="Delete the wish">Delete</a>
+            {% endif %}
+            {% if app.user == wish.user %}
             <a href="{{ path('app_wish_update',{'id':wish.id}) }}"
                class="btn btn-secondary mt-2 mb-2"
                title="Modify the wish">Modify</a>
+            {% endif %}
         </div>
     </div>
 {% endblock %}

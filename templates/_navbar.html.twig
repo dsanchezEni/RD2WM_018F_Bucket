@@ -13,12 +13,28 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ path('app_wish_list') }}" title="Wishes">Wishes</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ path('app_wish_create') }}" title="Add your Wishes">Add Yours !</a>
-                </li>
+                {% if app.user %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_wish_create') }}" title="Add your Wishes">Add Yours !</a>
+                    </li>
+                {% endif %}
                 <li class="nav-item">
                     <a class="nav-link" href="{{ path('main_about_us') }}" title="About Us">About Us</a>
                 </li>
+            </ul>
+            <ul class="navbar-nav mb-2 mb-lg-0">
+                {% if app.user %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_logout') }}" title="Logout">Logout (Hello {{ app.user.username }})</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_register') }}" title="Create your account">Register</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_login') }}" title="Login">Login</a>
+                    </li>
+                {% endif %}
             </ul>
         </div>
     </div>

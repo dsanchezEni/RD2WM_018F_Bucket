@@ -44,6 +44,7 @@ class WishController extends AbstractController
     {
         //Création de l'objet Wish.
         $wish = new Wish();
+        $wish->setUser($this->getUser());
         //Création du formulaire et on l'associe à notre objet wish.
         $wishForm = $this->createForm(WishType::class, $wish);
         //Récupére les données du form et on les injecte dans le wish
@@ -79,6 +80,12 @@ class WishController extends AbstractController
         if(!$wish){
             throw $this->createNotFoundException('Wish not found! Sorry !');
         }
+        //Teste si l'utilisateur connecté est le même que l'utilisateur associé au wish
+        //Si ce n'est pas le cas on propage une erreur qui bloquera la suite.
+        if($wish->getUser() !== $this->getUser()){
+            throw $this->createAccessDeniedException();
+        }
+
         //formulaire et on l'associe à notre objet wish.
         $wishForm = $this->createForm(WishType::class, $wish);
         //Récupére les données du form et on les injecte dans le wish
@@ -123,7 +130,12 @@ class WishController extends AbstractController
         if(!$wish){
             throw $this->createNotFoundException('Wish not found! Sorry !');
         }
-        dump($request);
+        //Teste si l'utilisateur connecté est le même que l'utilisateur associé au wish ou l'utilisateur n'a pas le role admin.
+        //Si ce n'est pas le cas on propage une erreur qui bloquera la suite.
+        if(!($wish->getUser() === $this->getUser() || $this->isGranted('ROLE_ADMIN'))){
+            throw $this->createAccessDeniedException();
+        }
+        //dump($request);
         if($this->isCsrfTokenValid('delete'.$wish->getId(), $request->get('token'))){
             $em->remove($wish);
             $em->flush();
